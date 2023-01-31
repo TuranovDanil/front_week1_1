@@ -48,8 +48,19 @@
                 <p>Cart({{ cart }})</p>
             </div>
 
-            <button @click="addToCart">Add to cart</button>
-            <button @click="delToCart">Del to cart</button>
+            <button
+                    @click="addToCart"
+                    :disabled="!inventory || cart >= inventory"
+                    :class="{ disabledButton: !inventory || cart >= inventory}"
+            >
+                Add to cart
+            </button>
+            <button
+                    @click="delToCart"
+                    :class="{ disabledButton: !cart}"
+            >
+                Del to cart
+            </button>
         </div>
 
     </div>
