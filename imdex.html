@@ -20,6 +20,8 @@
             <h1>{{ product }}</h1>
             <p>{{ description }}</p>
             <a :href="link" >More products like this</a>
+            <p v-if="inStock">In Stock</p>
+            <p v-else>Out of Stock</p>
         </div>
     </div>
 </div>
