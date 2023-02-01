@@ -54,7 +54,7 @@ Vue.component('product', {
             >
                 Del to cart
             </button>
-            <p>User is premium: {{ premium }}</p>
+            <p>Shipping: {{ shipping }}</p>
         </div>
 
     </div>
@@ -114,6 +114,13 @@ Vue.component('product', {
         },
         sale(){
             if(this.onSale) return this.brand + " " + this.product + " " + "On SALE";
+        },
+        shipping(){
+            if(this.premium){
+                return "Free";
+            } else {
+                return 2.99;
+            }
         }
 
     }
