@@ -57,8 +57,18 @@ Vue.component('product', {
             </button>
             <p>Shipping: {{ shipping }}</p>
         </div>
+        <div>
+            <h2>Reviews</h2>
+            <p v-if="!reviews.length">There are no reviews yet.</p>
+            <ul>
+                <li v-for="review in reviews">
+                    <p>{{ review.name }}</p>
+                    <p>Rating: {{ review.rating }}</p>
+                    <p>{{ review.review }}</p>
+                </li>
+            </ul>
+        </div>
         <product-review @review-submitted="addReview"></product-review>
-
     </div>
  `,
     data() {
@@ -173,8 +183,8 @@ Vue.component('product-review', {
             rating: null,
         }
     },
-    methods:{
-        onsubmit(){
+    methods: {
+        onsubmit() {
             let productReview = {
                 name: this.name,
                 review: this.review,
