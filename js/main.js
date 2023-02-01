@@ -57,18 +57,8 @@ Vue.component('product', {
             </button>
             <p>Shipping: {{ shipping }}</p>
         </div>
-        <div>
-            <h2>Reviews</h2>
-            <p v-if="!reviews.length">There are no reviews yet.</p>
-            <ul>
-                <li v-for="review in reviews">
-                    <p>{{ review.name }}</p>
-                    <p>Rating: {{ review.rating }}</p>
-                    <p>{{ review.review }}</p>
-                </li>
-            </ul>
-        </div>
-        <product-review @review-submitted="addReview"></product-review>
+        <product-tabs :reviews="reviews"></product-tabs>
+        
     </div>
  `,
     data() {
@@ -226,6 +216,47 @@ Vue.component('product-review', {
         }
     }
 })
+
+Vue.component('product-tabs', {
+    props: {
+        reviews:{
+            type: Array,
+            required: false
+        }
+    },
+    template: `
+   <div>   
+     <ul>
+       <span class="tab"
+             v-for="(tab, index) in tabs"
+             @click="selectedTab = tab"
+             :class="{ activeTab: selectedTab === tab }"
+       >{{ tab }}</span>
+     </ul>
+     <div v-show="selectedTab === 'Reviews'">
+            <p v-if="!reviews.length">There are no reviews yet.</p>
+            <ul>
+                <li v-for="review in reviews">
+                    <p>{{ review.name }}</p>
+                    <p>Rating: {{ review.rating }}</p>
+                    <p>{{ review.review }}</p>
+                </li>
+            </ul>
+     </div>
+     <div v-show="selectedTab === 'Make a Review'">
+          <product-review @review-submitted="addReview"></product-review>
+     </div>
+   </div>
+   
+ `,
+    data() {
+        return {
+            tabs: ['Reviews', 'Make a Review'],
+            selectedTab: 'Reviews',
+        }
+    }
+})
+
 
 let app = new Vue({
     el: '#app',
