@@ -21,9 +21,8 @@
             <p>{{ description }}</p>
             <a :href="link" >More products like this</a>
 
-            <p v-if="inventory > 10">In Stock</p>
-            <p v-else-if="inventory <= 10 && inventory > 0">Almost sold out!</p>
-            <p v-else :class="{ through: !inventory}">Out of stock</p>
+            <p v-if="inStock">In Stock</p>
+            <p v-else :class="{ through: !inStock}">Out of stock</p>
 
             <span v-show="onSale">On Sale</span>
 
@@ -50,8 +49,8 @@
 
             <button
                     @click="addToCart"
-                    :disabled="!inventory || cart >= inventory"
-                    :class="{ disabledButton: !inventory || cart >= inventory}"
+                    :disabled="!inStock || cart >= inStock"
+                    :class="{ disabledButton: !inStock || cart >= inStock}"
             >
                 Add to cart
             </button>
