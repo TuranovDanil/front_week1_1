@@ -26,14 +26,21 @@ Vue.component('product', {
 
             <span v-show="onSale">{{ sale }}</span>
 
-
-            <div
+            <div>
+            <button @click="previousProduct()">&#5176;</button>
+               <div
                     class="color-box"
-                    v-for="(variant, index) in variants"
-                    :key="variant.variantId"
-                    :style="{ backgroundColor:variant.variantColor}"
-                    @mouseover="updateProduct(index)"
-            >
+                    :style="{ backgroundColor:variants[selectedVariant].variantColor}"
+                >
+                </div>
+            <button @click="nextProduct()">&#5171;</button>
+<!--            <input type="checkbox" id="auto" name="auto" value="true" v-model="auto" @click="autoCheck()">-->
+<!--            <label for="auto">auto</label>-->
+            <button
+                @click="autoCheck"
+                :class="{ disabledButton: !auto }">
+            auto
+            </button>
             </div>
 
             <ul>
@@ -81,10 +88,24 @@ Vue.component('product', {
                     variantColor: 'blue',
                     variantImage: "./assets/vmSocks-blue-onWhite.jpg",
                     variantQuantity: 0
-                }
+                },
+                {
+                    variantId: 2236,
+                    variantColor: 'grey',
+                    variantImage: "./assets/grey-socks.jpg",
+                    variantQuantity: 5
+                },
+                {
+                    variantId: 2237,
+                    variantColor: 'purple',
+                    variantImage: "./assets/purple-socks.jpg",
+                    variantQuantity: 2
+                },
             ],
             sizes: ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
             reviews: [],
+            auto: false,
+            timeId: 0,
 
         }
     },
@@ -99,8 +120,34 @@ Vue.component('product', {
                 this.variants[this.selectedVariant].variantId);
             this.variants[this.selectedVariant].variantQuantity += 1;
         },
-        updateProduct(index) {
-            this.selectedVariant = index;
+        nextProduct() {
+            if (this.selectedVariant == this.variants.length - 1) {
+                this.selectedVariant = 0;
+            } else {
+                this.selectedVariant += 1;
+            }
+        },
+        previousProduct() {
+            if (this.selectedVariant == 0) {
+                this.selectedVariant = this.variants.length - 1;
+            } else {
+                this.selectedVariant -= 1;
+            }
+        },
+        autoCheck() {
+            this.auto = !this.auto;
+            clearInterval(this.timeId)
+
+            this.timeId = setInterval(() => {
+                if(!this.auto){
+                    clearInterval(this.timeId)
+                }
+                else{
+                    this.nextProduct();
+                }
+
+            }, 1000)
+
         },
     },
     mounted() {
@@ -206,6 +253,7 @@ Vue.component('product-review', {
     },
     methods: {
         onSubmit() {
+            this.errors = [];
             if (this.name && this.review && this.rating && this.question) {
                 let productReview = {
                     name: this.name,
@@ -231,14 +279,14 @@ Vue.component('product-review', {
 
 Vue.component('product-tabs', {
     props: {
-        reviews:{
+        reviews: {
             type: Array,
             required: false
         },
-        shipping:{
+        shipping: {
             required: true
         },
-        details:{
+        details: {
             type: Array,
             required: true
         }
