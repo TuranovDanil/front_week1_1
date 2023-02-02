@@ -14,7 +14,7 @@ Vue.component('product', {
     template: `
    <div class="product">
         <div class="product-image">
-            <img :src="image" :alt="altText">
+            <img :src="image" :alt="altText" :class="{animationRight: animationRight, animationLeft: animationLeft}">
         </div>
         <div class="product-info">
             <h1>{{ title }}</h1>
@@ -27,15 +27,14 @@ Vue.component('product', {
             <span v-show="onSale">{{ sale }}</span>
 
             <div>
-            <button @click="previousProduct()">&#5176;</button>
+            <button @click="previousProduct()" :disabled="animationLeft" :class="{ disabledButton: animationLeft }">&#5176;</button>
                <div
                     class="color-box"
+                    :class="{animationRight: animationRight, animationLeft: animationLeft}"
                     :style="{ backgroundColor:variants[selectedVariant].variantColor}"
                 >
                 </div>
-            <button @click="nextProduct()">&#5171;</button>
-<!--            <input type="checkbox" id="auto" name="auto" value="true" v-model="auto" @click="autoCheck()">-->
-<!--            <label for="auto">auto</label>-->
+            <button @click="nextProduct()" :disabled="animationRight" :class="{ disabledButton: animationRight }">&#5171;</button>
             <button
                 @click="autoCheck"
                 :class="{ disabledButton: !auto }">
@@ -81,31 +80,33 @@ Vue.component('product', {
                     variantId: 2234,
                     variantColor: 'green',
                     variantImage: "./assets/vmSocks-green-onWhite.jpg",
-                    variantQuantity: 10
+                    variantQuantity: 10,
                 },
                 {
                     variantId: 2235,
                     variantColor: 'blue',
                     variantImage: "./assets/vmSocks-blue-onWhite.jpg",
-                    variantQuantity: 0
+                    variantQuantity: 0,
                 },
                 {
                     variantId: 2236,
                     variantColor: 'grey',
                     variantImage: "./assets/grey-socks.jpg",
-                    variantQuantity: 5
+                    variantQuantity: 5,
                 },
                 {
                     variantId: 2237,
                     variantColor: 'purple',
                     variantImage: "./assets/purple-socks.jpg",
-                    variantQuantity: 2
+                    variantQuantity: 2,
                 },
             ],
             sizes: ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
             reviews: [],
             auto: false,
             timeId: 0,
+            animationRight: false,
+            animationLeft: false,
 
         }
     },
@@ -121,18 +122,27 @@ Vue.component('product', {
             this.variants[this.selectedVariant].variantQuantity += 1;
         },
         nextProduct() {
-            if (this.selectedVariant == this.variants.length - 1) {
-                this.selectedVariant = 0;
-            } else {
-                this.selectedVariant += 1;
-            }
+            this.animationRight = true;
+            setTimeout(()=>{
+                if (this.selectedVariant === this.variants.length - 1) {
+                    this.selectedVariant = 0;
+                } else {
+                    this.selectedVariant += 1;
+                }
+                this.animationRight = false;
+            }, 1500)
+
         },
         previousProduct() {
-            if (this.selectedVariant == 0) {
-                this.selectedVariant = this.variants.length - 1;
-            } else {
-                this.selectedVariant -= 1;
-            }
+            this.animationLeft = true;
+            setTimeout(()=>{
+                if (this.selectedVariant === 0) {
+                    this.selectedVariant = this.variants.length - 1;
+                } else {
+                    this.selectedVariant -= 1;
+                }
+                this.animationLeft = false;
+            }, 1500)
         },
         autoCheck() {
             this.auto = !this.auto;
@@ -146,7 +156,7 @@ Vue.component('product', {
                     this.nextProduct();
                 }
 
-            }, 1000)
+            }, 2020)
 
         },
     },

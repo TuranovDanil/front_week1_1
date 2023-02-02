@@ -91,3 +91,15 @@ textarea {
 .through {
     text-decoration: line-through;
 }
+
+.animationRight{
+    transition: 1s;
+    opacity: .5;
+    transform: rotate(1turn);
+}
+
+.animationLeft{
+    transition: 1s;
+    opacity: .5;
+    transform: rotate(-1turn);
+}
