@@ -1,365 +1,264 @@
-let eventBus = new Vue()
+let eventBus = new Vue();
 
-Vue.component('product', {
+Vue.component('list', {
     props: {
-        premium: {
-            type: Boolean,
-            required: true
+        note_data: {
+            type: Object,
+            default() {
+                return {}
+            }
         },
-        cart: {
+        idColumn: {
+            type: Object,
+            default() {
+                return {}
+            }
+        },
+        notes: {
             type: Array,
-            required: true
-        }
-    },
-    template: `
-   <div class="product">
-        <div class="product-image">
-            <img :src="image" :alt="altText" :class="{animationRight: animationRight, animationLeft: animationLeft}">
-        </div>
-        <div class="product-info">
-            <h1>{{ title }}</h1>
-            <p>{{ description }}</p>
-            <a :href="link" >More products like this</a>
-
-            <p v-if="inStock">In Stock</p>
-            <p v-else :class="{ through: !inStock}">Out of stock</p>
-
-            <span v-show="onSale">{{ sale }}</span>
-
-            <div>
-            <button @click="previousProduct()" :disabled="animationLeft" :class="{ disabledButton: animationLeft }">&#5176;</button>
-               <div
-                    class="color-box"
-                    :class="{animationRight: animationRight, animationLeft: animationLeft}"
-                    :style="{ backgroundColor:variants[selectedVariant].variantColor}"
-                >
-                </div>
-            <button @click="nextProduct()" :disabled="animationRight" :class="{ disabledButton: animationRight }">&#5171;</button>
-            <button
-                @click="autoCheck"
-                :class="{ disabledButton: !auto }">
-            auto
-            </button>
-            </div>
-
-            <ul>
-                <li v-for="size in sizes">{{ size }}</li>
-            </ul>
-
-            <button
-                    @click="addToCart"
-                    :disabled="!inStock"
-                    :class="{ disabledButton: !inStock }"
-            >
-                Add to cart
-            </button>
-            <button
-                    @click="delToCart"
-                    :disabled="!cart.includes(variants[selectedVariant].variantId)"
-                    :class="{ disabledButton: !cart.includes(variants[selectedVariant].variantId) }"
-            >
-                Del to cart
-            </button>
-        </div>
-        <product-tabs :reviews="reviews" :shipping="shipping" :details="details"></product-tabs>
-        
-    </div>
- `,
-    data() {
-        return {
-            product: "Socks",
-            brand: 'Vue Mastery',
-            description: "A pair of warm, fuzzy socks",
-            selectedVariant: 0,
-            altText: "A pair of socks",
-            link: "https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=socks",
-            onSale: true,
-            details: ['80% cotton', '20% polyester', 'Gender-neutral'],
-            variants: [
-                {
-                    variantId: 2234,
-                    variantColor: 'green',
-                    variantImage: "./assets/vmSocks-green-onWhite.jpg",
-                    variantQuantity: 10,
-                },
-                {
-                    variantId: 2235,
-                    variantColor: 'blue',
-                    variantImage: "./assets/vmSocks-blue-onWhite.jpg",
-                    variantQuantity: 0,
-                },
-                {
-                    variantId: 2236,
-                    variantColor: 'grey',
-                    variantImage: "./assets/grey-socks.jpg",
-                    variantQuantity: 5,
-                },
-                {
-                    variantId: 2237,
-                    variantColor: 'purple',
-                    variantImage: "./assets/purple-socks.jpg",
-                    variantQuantity: 2,
-                },
-            ],
-            sizes: ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
-            reviews: [],
-            auto: false,
-            timeId: 0,
-            animationRight: false,
-            animationLeft: false,
-
-        }
-    },
-    methods: {
-        addToCart() {
-            this.$emit('add-to-cart',
-                this.variants[this.selectedVariant].variantId);
-            this.variants[this.selectedVariant].variantQuantity -= 1
+            default() {
+                return {}
+            }
         },
-        delToCart() {
-            this.$emit('del-to-cart',
-                this.variants[this.selectedVariant].variantId);
-            this.variants[this.selectedVariant].variantQuantity += 1;
-        },
-        nextProduct() {
-            this.animationRight = true;
-            setTimeout(()=>{
-                if (this.selectedVariant === this.variants.length - 1) {
-                    this.selectedVariant = 0;
-                } else {
-                    this.selectedVariant += 1;
-                }
-                this.animationRight = false;
-            }, 1500)
-
-        },
-        previousProduct() {
-            this.animationLeft = true;
-            setTimeout(()=>{
-                if (this.selectedVariant === 0) {
-                    this.selectedVariant = this.variants.length - 1;
-                } else {
-                    this.selectedVariant -= 1;
-                }
-                this.animationLeft = false;
-            }, 1500)
-        },
-        autoCheck() {
-            this.auto = !this.auto;
-            clearInterval(this.timeId)
-
-            this.timeId = setInterval(() => {
-                if(!this.auto){
-                    clearInterval(this.timeId)
-                }
-                else{
-                    this.nextProduct();
-                }
-
-            }, 2020)
-
-        },
-    },
-    mounted() {
-        eventBus.$on('review-submitted', productReview => {
-            this.reviews.push(productReview)
-        })
-    },
-    computed: {
-        title() {
-            return this.brand + " " + this.product;
-        },
-        image() {
-            return this.variants[this.selectedVariant].variantImage;
-        },
-        inStock() {
-            return this.variants[this.selectedVariant].variantQuantity;
-        },
-        sale() {
-            if (this.onSale) return this.brand + " " + this.product + " " + "On SALE";
-        },
-        shipping() {
-            if (this.premium) {
-                return "Free";
-            } else {
-                return 2.99;
+        about:{
+            type: Object,
+            default() {
+                return {}
             }
         }
-
-    }
-
-})
-
-Vue.component('product-details', {
-    props: {
-        details: {
-            type: Array,
-            required: true,
+    },
+    data() {
+        return {
+            taskTitle: null,
+            task: [],
         }
+
+    },
+    methods: {
+        delNote() {
+            this.$emit('del_note')
+        },
+        column1Move() {
+            this.$emit('column1_move')
+        },
+        column2Move() {
+            this.$emit('column2_move')
+        },
+        column2MoveLeft() {
+            this.$emit('column2_move_left')
+        },
+        addTask() {
+            if (this.taskTitle) {
+                this.note_data.tasks.push({
+                    taskTitle: this.taskTitle,
+                    completed: false,
+                });
+                this.taskTitle = null;
+                this.updateCompletedNum();
+                this.save();
+            }
+        },
+        checkbox(id) {
+            this.note_data.tasks[id].completed = !this.note_data.tasks[id].completed;
+            this.updateCompletedNum();
+            this.save();
+        },
+        updateCompletedNum() {
+            let counterCompleted = 0;
+            let counterNotCompleted = 0;
+            for (let el of this.note_data.tasks) {
+                if (el.completed) {
+                    counterCompleted++;
+                } else {
+                    counterNotCompleted++;
+                }
+            }
+            this.note_data.completedNum = (counterCompleted / (counterCompleted + counterNotCompleted)) * 100;
+
+        },
+        save() {
+            if (this.idColumn === 1 && this.note_data.completedNum <= 50) localStorage.todo = JSON.stringify(this.notes);
+            else if (this.idColumn === 3 && this.note_data.completedNum === 100) localStorage.todo3 = JSON.stringify(this.notes);
+            else localStorage.todo2 = JSON.stringify(this.notes);
+        }
+
     },
     template: `
-   <ul>
-        <li v-for="detail in details">{{ detail }}</li>
-   </ul>
- `
-})
-
-Vue.component('product-review', {
-    template: `
-    <form class="review-form" @submit.prevent="onSubmit">
-        <p v-if="errors.length">
-            <b>Please correct the following error(s):</b>
-            <ul>
-                <li v-for="error in errors">{{ error }}</li>
-            </ul>
-        </p>
-
-        <p>
-            <label for="name">Name:</label>
-            <input id="name" v-model="name" placeholder="name">
-        </p>
-    
-        <p>
-            <label for="review">Review:</label>
-            <textarea id="review" v-model="review"></textarea>
-        </p>
-    
-        <p>
-            <label for="rating">Rating:</label>
-            <select id="rating" v-model.number="rating">
-                <option>5</option>
-                <option>4</option>
-                <option>3</option>
-                <option>2</option>
-                <option>1</option>
-            </select>
-        </p>
-        
-        <p>Would you recommend this product?</p>
-        <div>
-            <label for="yes">yes</label>
-            <input type="radio" id="yes"
-             name="question" value="yes" v-model="question">            
-            <label for="no">no</label>
-            <input type="radio" id="no"
-             name="question" value="no" v-model="question">
+    <div class="list" >
+            <div class="note_title_block">
+                <h2 class="note_title">{{note_data.noteTitle}}</h2>
+                <button @click="delNote()">X</button>
+            </div>
+            <div class="tasks">
+                <div v-for="(element, elementId) in note_data.tasks" :key="elementId" class="task">
+                    <div class="set_task">
+                        <h3 class="title_task">{{element.taskTitle}}</h3>
+                        <input @click="checkbox(elementId),column1Move(),column2Move(),column2MoveLeft()" 
+                               type="checkbox" 
+                               v-model="element.completed" 
+                               :class="{none: note_data.completedNum === 100, disabled: note_data.completedNum > 50 && element.completed && about.lengthColumn1 === 3}" >
+                    </div>
+                    
+                    <div class="date" v-if="note_data.date">
+                        <p>{{note_data.time}}</p>
+                        <p>{{note_data.date}}</p>
+                    </div>
+                </div>
+                <div class="add_task" :class="{none: note_data.tasks.length >= 5 || note_data.completedNum === 100}">                  
+                    <div class="add_task_input">
+                        <input required type="text" @keyup.enter="addTask(),column2MoveLeft()" v-model="taskTitle" placeholder="Задача">
+                    </div>
+                    <button @click="addTask(),column2MoveLeft()">Добавить</button>
+            </div>
         </div>
-        <p>
-
-            <input type="submit" value="Submit"> 
-        </p>
-
-    </form>
+    </div>
 
     `,
-    data() {
-        return {
-            name: null,
-            review: null,
-            rating: null,
-            question: null,
-            errors: [],
-        }
-    },
-    methods: {
-        onSubmit() {
-            this.errors = [];
-            if (this.name && this.review && this.rating && this.question) {
-                let productReview = {
-                    name: this.name,
-                    review: this.review,
-                    rating: this.rating,
-                    question: this.question,
-                }
-                eventBus.$emit('review-submitted', productReview)
-                this.name = null;
-                this.review = null;
-                this.rating = null;
-                this.question = null;
-            } else {
-                if (!this.name) this.errors.push("Name required.");
-                if (!this.review) this.errors.push("Review required.");
-                if (!this.rating) this.errors.push("Rating required.");
-                if (!this.question) this.errors.push("Question required.");
-            }
-
-        }
-    }
-})
-
-Vue.component('product-tabs', {
-    props: {
-        reviews: {
-            type: Array,
-            required: false
-        },
-        shipping: {
-            required: true
-        },
-        details: {
-            type: Array,
-            required: true
-        }
-    },
-    template: `
-   <div>   
-     <ul>
-       <span class="tab"
-             :class="{ activeTab: selectedTab === tab }"
-             v-for="(tab, index) in tabs"
-             @click="selectedTab = tab"
-       >{{ tab }}</span>
-     </ul>
-     <div v-show="selectedTab === 'Reviews'">
-            <p v-if="!reviews.length">There are no reviews yet.</p>
-            <ul>
-                <li v-for="review in reviews">
-                    <p>{{ review.name }}</p>
-                    <p>Rating: {{ review.rating }}</p>
-                    <p>{{ review.review }}</p>
-                </li>
-            </ul>
-     </div>
-     <div v-show="selectedTab === 'Make a Review'">
-          <product-review ></product-review>
-     </div>
-     
-     <div v-show="selectedTab === 'Shipping'">
-            <p>{{ shipping }}</p>
-     </div>
-            
-     <div v-show="selectedTab === 'Details'">
-            <ul>
-                <li v-for="detail in details">{{ detail }}</li>
-            </ul>
-     </div>
-   </div>
-   
- `,
-    data() {
-        return {
-            tabs: ['Reviews', 'Make a Review', 'Shipping', 'Details'],
-            selectedTab: 'Reviews',
-        }
-    }
 })
 
 
 let app = new Vue({
     el: '#app',
     data: {
-        premium: true,
-        cart: [],
+        column1: {
+            notes: [],
+            idColumn: 1
+        },
+        column2: {
+            notes: [],
+            idColumn: 2
+        },
+        column3: {
+            notes: [],
+            idColumn: 3
+        },
+        noteTitle: null,
+        taskTitle1: null,
+        taskTitle2: null,
+        taskTitle3: null,
+        completed: false,
+        about:{
+            signal: false,
+            bufColumn: [],
+            id: null,
+            lengthColumn1: null
+        },
+    },
+    computed: {},
+    mounted() {
+        if (localStorage.todo) {
+            this.column1.notes = JSON.parse(localStorage.todo)
+        }
+        if (localStorage.todo2) {
+            this.column2.notes = JSON.parse(localStorage.todo2)
+        }
+        if (localStorage.todo3) {
+            this.column3.notes = JSON.parse(localStorage.todo3)
+        }
+        if (localStorage.about){
+            this.about = JSON.parse(localStorage.about)
+        }
     },
     methods: {
-        updateCart(id) {
-            this.cart.push(id);
+        createNote() {
+            if (this.noteTitle && this.column1.notes.length < 3 && this.taskTitle1 && this.taskTitle2 && this.taskTitle3) {
+                this.column1.notes.push({
+                    noteTitle: this.noteTitle,
+                    tasks: [
+                        {
+                            taskTitle: this.taskTitle1,
+                            completed: this.completed
+                        },
+                        {
+                            taskTitle: this.taskTitle2,
+                            completed: this.completed
+                        },
+                        {
+                            taskTitle: this.taskTitle3,
+                            completed: this.completed
+                        }
+                    ],
+                    completedNum: 0,
+                    date: null,
+                    time: null
+                });
+                this.noteTitle = null;
+                this.taskTitle1 = null;
+                this.taskTitle2 = null;
+                this.taskTitle3 = null
+                localStorage.todo = JSON.stringify(this.column1.notes);
+
+            }
+            this.length()
         },
-        downdateCart(id) {
-            this.cart.splice(this.cart.indexOf(id), 1);
+        deleteNote1(id) {
+            this.column1.notes.splice(id, 1);
+            this.length()
+            localStorage.todo = JSON.stringify(this.column1.notes);
+        },
+        deleteNote2(id) {
+            this.column2.notes.splice(id, 1);
+            this.about.signal = false
+            this.moveColumn1(this.about.id)
+            localStorage.about = JSON.stringify(this.about)
+            localStorage.todo2 = JSON.stringify(this.column2.notes);
+        },
+        deleteNote3(id) {
+            this.column3.notes.splice(id, 1);
+            localStorage.todo3 = JSON.stringify(this.column3.notes);
+        },
+        moveColumn1(id) {
+            if (this.column1.notes[id].completedNum > 50 && this.column2.notes.length <= 5) {
+                if (this.column2.notes.length === 5) {
+                    this.about.signal = true;
+                    this.about.bufColumn.push(this.column1.notes[id])
+                    this.about.id = id
+                }
+                else if(this.about.bufColumn[0] && this.column2.notes.length === 4){
+                    this.column2.notes.push(this.about.bufColumn[0])
+                    this.about.bufColumn.splice(0, 1)
+                    this.column1.notes.splice(this.about.id, 1)
+                }
+                else {
+                    this.column2.notes.push(this.column1.notes[id])
+                    this.column1.notes.splice(id, 1)
+                }
+            }
+            this.length()
+            localStorage.todo = JSON.stringify(this.column1.notes);
+            localStorage.todo2 = JSON.stringify(this.column2.notes);
+            localStorage.about = JSON.stringify(this.about)
+        },
+        moveColumn2(id) {
+            if (this.column2.notes[id].completedNum === 100) {
+                this.timeAndData(id);
+                this.column3.notes.push(this.column2.notes[id]);
+                this.column2.notes.splice(id, 1);
+                this.moveColumn1(this.about.id)
+                this.about.signal = false
+            }
+            localStorage.todo2 = JSON.stringify(this.column2.notes);
+            localStorage.todo3 = JSON.stringify(this.column3.notes);
+            localStorage.about = JSON.stringify(this.about)
+        },
+        moveColumn2Left(id) {
+            if (this.column2.notes[id].completedNum <= 50) {
+                this.column1.notes.unshift(this.column2.notes[id]);
+                this.column2.notes.splice(id, 1);
+                this.moveColumn1(this.about.id)
+            }
+            this.length()
+            localStorage.todo = JSON.stringify(this.column1.notes);
+            localStorage.todo2 = JSON.stringify(this.column2.notes);
+        },
+        timeAndData(id) {
+            let Data = new Date();
+            this.column2.notes[id].time = Data.getHours() + ':' + Data.getMinutes();
+            this.column2.notes[id].date = Data.getDate() + ':' + Data.getMonth() + ':' + Data.getFullYear();
+        },
+        length(){
+            this.about.lengthColumn1 = this.column1.notes.length;
+            localStorage.about = JSON.stringify(this.about)
         }
-    }
+    },
 })
-
-
-
